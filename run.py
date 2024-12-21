@@ -1,8 +1,9 @@
 import sys
-from implements import Basic, Block, Paddle, Ball
+from implements import Block, Paddle, Ball, Item
 import config
-
+import random
 import pygame
+import copy
 from pygame.locals import QUIT, Rect, K_ESCAPE, K_SPACE
 
 
@@ -32,9 +33,23 @@ def create_blocks():
             )
             color_index = j % len(config.colors)
             color = config.colors[color_index]
-            block = Block(color, (x, y))
+            block = Block(color, (x, y), on_block_destroy)
             BLOCKS.append(block)
 
+def on_block_destroy(block):
+    if random.random() < 0.2:  # 20% 확률로 아이템 생성 - Kyonami
+        ITEMS.append(Item(block.pos, config.item_blue_color, on_blue_item_reached))
+
+    ''' 새 아이템 추가 예시 - Kyonami
+    if 조건 
+        ITEMS.append(Item(block.pos, config.item_orange_color, on_orange_item_reached))
+    '''
+    
+def on_blue_item_reached(paddle): # 파란 아이템을 획득 했을 때  - Kyonami
+    balls = copy.deepcopy(BALLS)
+    for ball in balls:
+        BALLS.append(Ball(ball.dir + config.scattering_angle, ball.rect.center))
+        BALLS.append(Ball(ball.dir - config.scattering_angle, ball.rect.center))    # 좌에 하나 우에 하나 공을 추가함
 
 def tick():
     global life
@@ -68,6 +83,12 @@ def tick():
         ball.hit_wall()
         if ball.alive() == False:
             BALLS.remove(ball)
+    
+    for item in ITEMS:
+        item.move()
+        item.collide_paddle(paddle)
+        if item.is_out_of_screen(): # 아이템이 화면 밖으로 나갔다면 아이템을 remove 함
+            ITEMS.remove(item)
 
 
 def main():
@@ -116,10 +137,11 @@ def main():
                 ball.draw(surface)
             for block in BLOCKS:
                 block.draw(surface)
+            for item in ITEMS:
+                item.draw(surface)
 
         pygame.display.update()
         fps_clock.tick(config.fps)
-
 
 if __name__ == "__main__":
     main()

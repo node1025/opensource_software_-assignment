@@ -1,9 +1,7 @@
 import math
 import random
 import time
-
 import config
-
 import pygame
 from pygame.locals import Rect, K_LEFT, K_RIGHT
 
@@ -25,10 +23,11 @@ class Basic:
 
 
 class Block(Basic):
-    def __init__(self, color: tuple, pos: tuple = (0,0), alive = True):
+    def __init__(self, color: tuple, pos: tuple = (0,0), on_collide = None , alive = True):
         super().__init__(color, 0, pos, config.block_size)
         self.pos = pos
         self.alive = alive
+        self.on_collide = on_collide
 
     def draw(self, surface) -> None:
         pygame.draw.rect(surface, self.color, self.rect)
@@ -36,6 +35,7 @@ class Block(Basic):
     def collide(self):
         self.alive = False  # 블록이 없어짐
         self.rect.topleft = (-100, -100)  # 블록을 화면 밖으로 이동
+        self.on_collide(self)
 
 
 class Paddle(Basic):
@@ -56,10 +56,13 @@ class Paddle(Basic):
 
 
 class Ball(Basic):
-    def __init__(self, pos: tuple = config.ball_pos):
+    def __init__(self, dir: int = 0, pos: tuple = config.ball_pos):
         super().__init__(config.ball_color, config.ball_speed, pos, config.ball_size)
         self.power = 1
-        self.dir = 90 + random.randint(-45, 45)
+        if(dir == 0):
+            self.dir = 90 + random.randint(-45, 45)
+        else:
+            self.dir = dir
 
     def draw(self, surface):
         pygame.draw.ellipse(surface, self.color, self.rect)
@@ -91,3 +94,27 @@ class Ball(Basic):
         if self.rect.top > config.display_dimension[1]:
             return False  # 공이 화면 아래로 나갔음
         return True  # 공이 여전히 살아있음
+    
+# 모든 Item은 이 객체를 사용함  - Kyonami
+class Item(Basic):
+    def __init__(self, pos: tuple = (0, 0), color: tuple = config.item_default_color, on_collide_paddle = None):
+        super().__init__(color, config.item_speed, pos, config.item_size)
+        self.on_collide_paddle = on_collide_paddle
+
+    def move(self):
+        self.rect.move_ip(0, self.speed)
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, self.rect)
+
+    def collide_paddle(self, paddle: Paddle):
+        if self.rect.colliderect(paddle.rect):
+            self.activate_effect(paddle)
+            self.rect.topleft = (-100, -100)    # 패들과 충돌시 아이템을 화면 밖으로 보냄 (사라지게)  - Kyonami
+
+    def activate_effect(self, paddle: Paddle):
+        if self.on_collide_paddle != None:
+            self.on_collide_paddle(paddle)   # 콜백 함수가 존재하면 호출  - Kyonami
+
+    def is_out_of_screen(self): 
+        return self.rect.top > config.display_dimension[1]  # 화면 하단 보다 내려가면 화면 밖으로 나갔다고 판단  - Kyonami
