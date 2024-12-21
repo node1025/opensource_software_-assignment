@@ -39,6 +39,7 @@ ball_size = (20, 20)
 # Setting for items
 item_size = (20, 20)
 item_default_color = (255, 255, 255)
+item_blue_color = (64, 64, 255)
 item_speed = 5
 scattering_angle = 30
 

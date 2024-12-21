@@ -37,8 +37,19 @@ def create_blocks():
             BLOCKS.append(block)
 
 def on_block_destroy(block):
-    if random.random() < 0.2:  # 20% 확률로 아이템 생성
-        ITEMS.append(Item(block.pos))
+    if random.random() < 0.2:  # 20% 확률로 아이템 생성 - Kyonami
+        ITEMS.append(Item(block.pos, config.item_blue_color, on_blue_item_reached))
+
+    ''' 새 아이템 추가 예시 - Kyonami
+    if 조건 
+        ITEMS.append(Item(block.pos, config.item_orange_color, on_orange_item_reached))
+    '''
+    
+def on_blue_item_reached(paddle):
+    balls = copy.deepcopy(BALLS)
+    for ball in balls:
+        BALLS.append(Ball(ball.dir + config.scattering_angle, ball.rect.center))
+        BALLS.append(Ball(ball.dir - config.scattering_angle, ball.rect.center))
 
 def tick():
     global life

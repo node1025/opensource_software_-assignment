@@ -56,10 +56,13 @@ class Paddle(Basic):
 
 
 class Ball(Basic):
-    def __init__(self, pos: tuple = config.ball_pos):
+    def __init__(self, dir: int = 0, pos: tuple = config.ball_pos):
         super().__init__(config.ball_color, config.ball_speed, pos, config.ball_size)
         self.power = 1
-        self.dir = 90 + random.randint(-45, 45)
+        if(dir == 0):
+            self.dir = 90 + random.randint(-45, 45)
+        else:
+            self.dir = dir
 
     def draw(self, surface):
         pygame.draw.ellipse(surface, self.color, self.rect)
