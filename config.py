@@ -36,13 +36,11 @@ ball_pos = (center_x, paddle_pos[1] - paddle_size[1])
 ball_fever_color = (255, 50, 0)
 ball_size = (20, 20)
 
-
 # Setting for items
 item_size = (20, 20)
-one_more_prob = 0.3
-fever_prob = 0.1
-add_score_prob = 0.1
-paddle_long_prob = 0.1
+item_default_color = (255, 255, 255)
+item_speed = 5
+scattering_angle = 30
 
 fever_time = 5
 

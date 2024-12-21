@@ -1,8 +1,9 @@
 import sys
-from implements import Basic, Block, Paddle, Ball
+from implements import Block, Paddle, Ball, Item
 import config
-
+import random
 import pygame
+import copy
 from pygame.locals import QUIT, Rect, K_ESCAPE, K_SPACE
 
 
@@ -32,9 +33,12 @@ def create_blocks():
             )
             color_index = j % len(config.colors)
             color = config.colors[color_index]
-            block = Block(color, (x, y))
+            block = Block(color, (x, y), on_block_destroy)
             BLOCKS.append(block)
 
+def on_block_destroy(block):
+    if random.random() < 0.2:  # 20% 확률로 아이템 생성
+        ITEMS.append(Item(block.pos))
 
 def tick():
     global life
@@ -68,6 +72,12 @@ def tick():
         ball.hit_wall()
         if ball.alive() == False:
             BALLS.remove(ball)
+    
+    for item in ITEMS:
+        item.move()
+        item.collide_paddle(paddle)
+        if item.is_out_of_screen():
+            ITEMS.remove(item)
 
 
 def main():
@@ -116,10 +126,11 @@ def main():
                 ball.draw(surface)
             for block in BLOCKS:
                 block.draw(surface)
+            for item in ITEMS:
+                item.draw(surface)
 
         pygame.display.update()
         fps_clock.tick(config.fps)
-
 
 if __name__ == "__main__":
     main()
