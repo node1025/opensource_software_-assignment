@@ -38,10 +38,10 @@ ball_size = (20, 20)
 
 # Setting for items
 item_size = (20, 20)
-item_default_color = (255, 255, 255)
-item_blue_color = (64, 64, 255)
+item_default_color = (255, 255, 255)    # 기본 아이템 색상 (흰색)
+item_blue_color = (64, 64, 255) # 파란 아이템 색상 (조금 밝은 파란색)
 item_speed = 5
-scattering_angle = 30
+scattering_angle = 30   # 아이템 획득 시 새 공이 좌우로 퍼지는 각도. 공이 45도로 올라가고 있었다면 15도, 75도로 두 개 발사함
 
 fever_time = 5
 

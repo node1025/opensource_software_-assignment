@@ -45,11 +45,11 @@ def on_block_destroy(block):
         ITEMS.append(Item(block.pos, config.item_orange_color, on_orange_item_reached))
     '''
     
-def on_blue_item_reached(paddle):
+def on_blue_item_reached(paddle): # 파란 아이템을 획득 했을 때  - Kyonami
     balls = copy.deepcopy(BALLS)
     for ball in balls:
         BALLS.append(Ball(ball.dir + config.scattering_angle, ball.rect.center))
-        BALLS.append(Ball(ball.dir - config.scattering_angle, ball.rect.center))
+        BALLS.append(Ball(ball.dir - config.scattering_angle, ball.rect.center))    # 좌에 하나 우에 하나 공을 추가함
 
 def tick():
     global life
@@ -87,7 +87,7 @@ def tick():
     for item in ITEMS:
         item.move()
         item.collide_paddle(paddle)
-        if item.is_out_of_screen():
+        if item.is_out_of_screen(): # 아이템이 화면 밖으로 나갔다면 아이템을 remove 함
             ITEMS.remove(item)
 
 

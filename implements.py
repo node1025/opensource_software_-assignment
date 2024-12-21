@@ -95,6 +95,7 @@ class Ball(Basic):
             return False  # 공이 화면 아래로 나갔음
         return True  # 공이 여전히 살아있음
     
+# 모든 Item은 이 객체를 사용함  - Kyonami
 class Item(Basic):
     def __init__(self, pos: tuple = (0, 0), color: tuple = config.item_default_color, on_collide_paddle = None):
         super().__init__(color, config.item_speed, pos, config.item_size)
@@ -109,11 +110,11 @@ class Item(Basic):
     def collide_paddle(self, paddle: Paddle):
         if self.rect.colliderect(paddle.rect):
             self.activate_effect(paddle)
-            self.rect.topleft = (-100, -100)
+            self.rect.topleft = (-100, -100)    # 패들과 충돌시 아이템을 화면 밖으로 보냄 (사라지게)  - Kyonami
 
     def activate_effect(self, paddle: Paddle):
         if self.on_collide_paddle != None:
-            self.on_collide_paddle(paddle)
+            self.on_collide_paddle(paddle)   # 콜백 함수가 존재하면 호출  - Kyonami
 
-    def is_out_of_screen(self):
-        return self.rect.top > config.display_dimension[1]
+    def is_out_of_screen(self): 
+        return self.rect.top > config.display_dimension[1]  # 화면 하단 보다 내려가면 화면 밖으로 나갔다고 판단  - Kyonami
